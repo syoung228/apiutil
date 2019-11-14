@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.pojo.Ads;
 import com.pojo.Data;
 import com.util.HttpClientUtil;
+import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
 
 import java.util.List;
 
@@ -23,7 +24,15 @@ import java.util.List;
 
 public class ApiUtil {
     public static Data getAds(){
-        String result = HttpClientUtil.httpGet(WeApiConstats.ADS);
+        String result = "";
+        try {
+            result = HttpClientUtil.httpGet(WeApiConstats.ADS);
+        }catch (Exception e){
+            Data data = new Data();
+            data.setCode("500");
+            data.setStatus("系统错误");
+            return data;
+        }
         JSONObject jsonObject  = JSONObject.parseObject(result);
         Data Data = JSONObject.toJavaObject(jsonObject,Data.class);
         return Data;
