@@ -6,14 +6,14 @@ package com.cc;/**
  */
 
 import com.WeApiConstats;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pojo.Ads;
 import com.pojo.Data;
+import com.util.ApiException;
 import com.util.HttpClientUtil;
-import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @ClassName
@@ -23,18 +23,90 @@ import java.util.List;
  */
 
 public class ApiUtil {
-    public static Data getAds(){
-        String result = "";
+    /**
+     * 获取物料列表
+     * @param per_page 每条页数
+     * @param page 当前页
+     * @return
+     */
+    public static Data getAds(String per_page,String page){
+
         try {
-            result = HttpClientUtil.httpGet(WeApiConstats.ADS);
+            if(page == null){
+                page = "1";
+            }
+            String url = WeApiConstats.ADS+"?page="+page;
+            if(per_page != null){
+                url = url + "&per_page=" +per_page;
+            }
+            String result = HttpClientUtil.httpGet(url);
+            JSONObject jsonObject  = JSONObject.parseObject(result);
+            if(!jsonObject.get("code").toString().startsWith("2")){
+                JSONObject jsonObject2  = JSONObject.parseObject(jsonObject.get("error").toString());
+                throw new ApiException(jsonObject2.get("message").toString());
+            }
+            Data Data = JSONObject.toJavaObject(jsonObject,Data.class);
+            return Data;
         }catch (Exception e){
             Data data = new Data();
             data.setCode("500");
             data.setStatus("系统错误");
             return data;
         }
-        JSONObject jsonObject  = JSONObject.parseObject(result);
-        Data Data = JSONObject.toJavaObject(jsonObject,Data.class);
-        return Data;
+
+
+    }
+
+    /**
+     * 物料商品详情
+     * @param adsId 物料商品id
+     * @return
+     */
+    public static Data getAdsInfo(String adsId)  {
+        Data data = new Data();
+        try {
+            String url = WeApiConstats.ADS_INFO+adsId;
+
+            String result = HttpClientUtil.httpGet(url);
+            JSONObject jsonObject  = JSONObject.parseObject(result);
+            if(!jsonObject.get("code").toString().startsWith("2")){
+                JSONObject jsonObject2  = JSONObject.parseObject(jsonObject.get("error").toString());
+                throw new ApiException(jsonObject2.get("message").toString());
+            }
+            data = JSONObject.toJavaObject(jsonObject,Data.class);
+            return data;
+        }catch (Exception e){
+            data.setCode("500");
+            data.setStatus("系统错误");
+            return data;
+        }
+
+    }
+
+    /**
+     * 短信推广
+     * @param api_key 客户认证
+     * @param phone 电话号码
+     * @param adsId 物料id
+     * @return 短信id
+     */
+    public static String sms(String api_key,String phone,String adsId) {
+        String smsId = null;
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("phone", phone);
+            map.put("ads", adsId);
+            String result = HttpClientUtil.httpsPost(map, WeApiConstats.SMS, "Bearer " + api_key);
+            JSONObject jsonObject = JSONObject.parseObject(result);
+            if (!jsonObject.get("code").toString().startsWith("2")) {
+                JSONObject jsonObject2 = JSONObject.parseObject(jsonObject.get("error").toString());
+                throw new ApiException(jsonObject2.get("message").toString());
+            }
+            JSONObject returnData = JSONObject.parseObject(jsonObject.get("data").toString());
+            smsId = returnData.get("id").toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return smsId;
     }
 }
