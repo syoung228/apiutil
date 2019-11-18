@@ -161,12 +161,12 @@ public class HttpClientUtil {
             HttpResponse response = httpClient.execute(request);
 
             /** 请求发送成功，并得到响应 **/
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            //if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 /** 读取服务器返回过来的json字符串数据 **/
                 strResult = EntityUtils.toString(response.getEntity());
-            } else {
+            //} else {
                 // logger.error("get请求提交失败:" + url);
-            }
+            //}
         } catch (IOException e) {
             e.printStackTrace();
             // logger.error("get请求提交失败:" + url, e);
