@@ -6,17 +6,39 @@ package com.pojo;/**
  */
 
 /**
+ * @
  * @author songy
- * @ClassName
+ * @ClassName 分页链接
  * @Date
  * @Version 1.0
  */
 
 public class Links {
+    /** 第一页链接*/
     private String first;
+    /** 最后一页链接*/
     private String last;
+    /** 前一页链接*/
     private String prev;
+    /** 下一页链接*/
     private String next;
+
+    public Links() {
+    }
+
+    /**
+     *
+     * @param first 第一页链接
+     * @param last 最后一页链接
+     * @param prev 前一页链接
+     * @param next 下一页链接
+     */
+    public Links(String first, String last, String prev, String next) {
+        this.first = first;
+        this.last = last;
+        this.prev = prev;
+        this.next = next;
+    }
 
     public String getFirst() {
         return first;

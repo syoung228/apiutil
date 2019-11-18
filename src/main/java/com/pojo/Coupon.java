@@ -13,12 +13,39 @@ package com.pojo;/**
  */
 
 public class Coupon {
+    /** 优惠券 ID*/
     private String id;
+    /** 优惠券链接*/
     private String link;
+    /** 优惠券领取开始时间*/
     private String available_at;
+    /** 优惠券领取截至时间*/
     private String available_end;
+    /** 优惠券使用开始时间*/
     private String use_at;
+    /** 优惠券使用截至时间*/
     private String use_end;
+
+    public Coupon() {
+    }
+
+    /**
+     *
+     * @param id
+     * @param link 优惠券链接
+     * @param available_at 优惠券领取开始时间
+     * @param available_end 优惠券领取截至时间
+     * @param use_at 优惠券使用开始时间
+     * @param use_end 优惠券使用截至时间
+     */
+    public Coupon(String id, String link, String available_at, String available_end, String use_at, String use_end) {
+        this.id = id;
+        this.link = link;
+        this.available_at = available_at;
+        this.available_end = available_end;
+        this.use_at = use_at;
+        this.use_end = use_end;
+    }
 
     public void setId(String id) {
         this.id = id;

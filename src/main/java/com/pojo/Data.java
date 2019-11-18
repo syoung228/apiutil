@@ -21,6 +21,25 @@ public class Data {
     private Links links;
     private Meta meta;
 
+    public Data() {
+    }
+
+    /**
+     *
+     * @param data 物料列表
+     * @param code
+     * @param status
+     * @param links
+     * @param meta
+     */
+    public Data(List<Ads> data, String code, String status, Links links, Meta meta) {
+        this.data = data;
+        this.code = code;
+        this.status = status;
+        this.links = links;
+        this.meta = meta;
+    }
+
     public List<Ads> getData() {
         return data;
     }
