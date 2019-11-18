@@ -29,32 +29,23 @@ public class ApiUtil {
      * @param page 当前页
      * @return
      */
-    public static Data getAds(String per_page,String page){
-
-        try {
-            if(page == null){
-                page = "1";
-            }
-            String url = WeApiConstats.ADS+"?page="+page;
-            if(per_page != null){
-                url = url + "&per_page=" +per_page;
-            }
-            String result = HttpClientUtil.httpGet(url);
-            JSONObject jsonObject  = JSONObject.parseObject(result);
-            if(!jsonObject.get("code").toString().startsWith("2")){
-                JSONObject jsonObject2  = JSONObject.parseObject(jsonObject.get("error").toString());
-                throw new ApiException(jsonObject2.get("message").toString());
-            }
-            Data Data = JSONObject.toJavaObject(jsonObject,Data.class);
-            return Data;
-        }catch (Exception e){
-            Data data = new Data();
-            data.setCode("500");
-            data.setStatus("系统错误");
-            return data;
+    public static Data getAds(String per_page,String page) throws ApiException{
+        Data data = null;
+        if(page == null){
+            page = "1";
         }
-
-
+        String url = WeApiConstats.ADS+"?page="+page;
+        if(per_page != null){
+            url = url + "&per_page=" +per_page;
+        }
+        String result = HttpClientUtil.httpGet(url);
+        JSONObject jsonObject  = JSONObject.parseObject(result);
+        if(!jsonObject.get("code").toString().startsWith("2")){
+            JSONObject jsonObject2  = JSONObject.parseObject(jsonObject.get("error").toString());
+            throw new ApiException(jsonObject2.get("message").toString());
+        }
+        data = JSONObject.toJavaObject(jsonObject,Data.class);
+        return data;
     }
 
     /**
@@ -62,24 +53,17 @@ public class ApiUtil {
      * @param adsId 物料商品id
      * @return
      */
-    public static Data getAdsInfo(String adsId)  {
+    public static Data getAdsInfo(String adsId) throws ApiException {
         Data data = new Data();
-        try {
-            String url = WeApiConstats.ADS_INFO+adsId;
-
-            String result = HttpClientUtil.httpGet(url);
-            JSONObject jsonObject  = JSONObject.parseObject(result);
-            if(!jsonObject.get("code").toString().startsWith("2")){
-                JSONObject jsonObject2  = JSONObject.parseObject(jsonObject.get("error").toString());
-                throw new ApiException(jsonObject2.get("message").toString());
-            }
-            data = JSONObject.toJavaObject(jsonObject,Data.class);
-            return data;
-        }catch (Exception e){
-            data.setCode("500");
-            data.setStatus("系统错误");
-            return data;
+        String url = WeApiConstats.ADS_INFO+adsId;
+        String result = HttpClientUtil.httpGet(url);
+        JSONObject jsonObject  = JSONObject.parseObject(result);
+        if(!jsonObject.get("code").toString().startsWith("2")){
+            JSONObject jsonObject2  = JSONObject.parseObject(jsonObject.get("error").toString());
+            throw new ApiException(jsonObject2.get("message").toString());
         }
+        data = JSONObject.toJavaObject(jsonObject,Data.class);
+        return data;
 
     }
 
@@ -90,23 +74,19 @@ public class ApiUtil {
      * @param adsId 物料id
      * @return 短信id
      */
-    public static String sms(String api_key,String phone,String adsId) {
+    public static String sms(String api_key,String phone,String adsId) throws ApiException{
         String smsId = null;
-        try {
-            Map<String, Object> map = new HashMap<>();
-            map.put("phone", phone);
-            map.put("ads", adsId);
-            String result = HttpClientUtil.httpsPost(map, WeApiConstats.SMS, "Bearer " + api_key);
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            if (!jsonObject.get("code").toString().startsWith("2")) {
-                JSONObject jsonObject2 = JSONObject.parseObject(jsonObject.get("error").toString());
-                throw new ApiException(jsonObject2.get("message").toString());
-            }
-            JSONObject returnData = JSONObject.parseObject(jsonObject.get("data").toString());
-            smsId = returnData.get("id").toString();
-        } catch (Exception e) {
-            e.printStackTrace();
+        Map<String, Object> map = new HashMap<>();
+        map.put("phone", phone);
+        map.put("ads", adsId);
+        String result = HttpClientUtil.httpsPost(map, WeApiConstats.SMS, "Bearer " + api_key);
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        if (!jsonObject.get("code").toString().startsWith("2")) {
+            JSONObject jsonObject2 = JSONObject.parseObject(jsonObject.get("error").toString());
+            throw new ApiException(jsonObject2.get("message").toString());
         }
+        JSONObject returnData = JSONObject.parseObject(jsonObject.get("data").toString());
+        smsId = returnData.get("id").toString();
         return smsId;
     }
 }
