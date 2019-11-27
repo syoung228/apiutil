@@ -9,7 +9,6 @@ import com.WeApiConstats;
 import com.alibaba.fastjson.JSONObject;
 import com.pojo.Data;
 import com.util.ApiException;
-import com.util.HttpClientUtil;
 import com.util.HttpUtils;
 
 import java.util.HashMap;
@@ -41,7 +40,12 @@ public class ApiUtil {
         if (per_page != null) {
             url = url + "&per_page=" + per_page;
         }
-        String result = HttpClientUtil.httpGet(url);
+        String result = null;
+        try {
+            result = HttpUtils.get(HttpUtils.doGet(url,null,null,null));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         JSONObject jsonObject = JSONObject.parseObject(result);
         if (!jsonObject.get(codeValue).toString().startsWith(code)) {
             JSONObject jsonObject2 = JSONObject.parseObject(jsonObject.get("error").toString());
@@ -62,7 +66,12 @@ public class ApiUtil {
         String code = "2";
         String codeValue = "code";
         String url = WeApiConstats.ADS_INFO + adsId;
-        String result = HttpClientUtil.httpGet(url);
+        String result = null;
+        try {
+            result = HttpUtils.get(HttpUtils.doGet(url,null,null,null));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         JSONObject jsonObject = JSONObject.parseObject(result);
         if (!jsonObject.get(codeValue).toString().startsWith(code)) {
             JSONObject jsonObject2 = JSONObject.parseObject(jsonObject.get("error").toString());
