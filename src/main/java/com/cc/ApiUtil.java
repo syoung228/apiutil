@@ -7,10 +7,10 @@ package com.cc;/**
 
 import com.WeApiConstats;
 import com.alibaba.fastjson.JSONObject;
-import com.pojo.Ads;
 import com.pojo.Data;
 import com.util.ApiException;
 import com.util.HttpClientUtil;
+import com.util.HttpUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +32,8 @@ public class ApiUtil {
      * @throws ApiException
      */
     public static Data getAds(String per_page, String page) throws ApiException {
-        Data data = null;
+        String code = "2";
+        String codeValue = "code";
         if (page == null) {
             page = "1";
         }
@@ -42,11 +43,11 @@ public class ApiUtil {
         }
         String result = HttpClientUtil.httpGet(url);
         JSONObject jsonObject = JSONObject.parseObject(result);
-        if (!jsonObject.get("code").toString().startsWith("2")) {
+        if (!jsonObject.get(codeValue).toString().startsWith(code)) {
             JSONObject jsonObject2 = JSONObject.parseObject(jsonObject.get("error").toString());
             throw new ApiException(jsonObject2.get("message").toString());
         }
-        data = JSONObject.toJavaObject(jsonObject, Data.class);
+        Data data = JSONObject.toJavaObject(jsonObject, Data.class);
         return data;
     }
 
@@ -58,15 +59,16 @@ public class ApiUtil {
      * @throws ApiException
      */
     public static Data getAdsInfo(String adsId) throws ApiException {
-        Data data = new Data();
+        String code = "2";
+        String codeValue = "code";
         String url = WeApiConstats.ADS_INFO + adsId;
         String result = HttpClientUtil.httpGet(url);
         JSONObject jsonObject = JSONObject.parseObject(result);
-        if (!jsonObject.get("code").toString().startsWith("2")) {
+        if (!jsonObject.get(codeValue).toString().startsWith(code)) {
             JSONObject jsonObject2 = JSONObject.parseObject(jsonObject.get("error").toString());
             throw new ApiException(jsonObject2.get("message").toString());
         }
-        data = JSONObject.toJavaObject(jsonObject, Data.class);
+        Data data = JSONObject.toJavaObject(jsonObject, Data.class);
         return data;
 
     }
@@ -81,18 +83,27 @@ public class ApiUtil {
      * @throws ApiException
      */
     public static String sms(String api_key, String phone, String adsId) throws ApiException {
-        String smsId = null;
-        Map<String, Object> map = new HashMap<>();
-        map.put("phone", phone);
-        map.put("ads", adsId);
-        String result = HttpClientUtil.httpsPost(map, WeApiConstats.SMS, "Bearer " + api_key);
+        String code = "2";
+        String codeValue = "code";
+        Map<String, String> body = new HashMap<>(4);
+        Map<String, String> header = new HashMap<>(4);
+        header.put("Accept","application/json");
+        header.put("Authorization",api_key);
+        body.put("phone", phone);
+        body.put("ads", adsId);
+        String result = null;
+        try {
+            result = HttpUtils.get(HttpUtils.doPost(WeApiConstats.SMS,null,header,null,body));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         JSONObject jsonObject = JSONObject.parseObject(result);
-        if (!jsonObject.get("code").toString().startsWith("2")) {
+        if (!jsonObject.get(codeValue).toString().startsWith(code)) {
             JSONObject jsonObject2 = JSONObject.parseObject(jsonObject.get("error").toString());
             throw new ApiException(jsonObject2.get("message").toString());
         }
         JSONObject returnData = JSONObject.parseObject(jsonObject.get("data").toString());
-        smsId = returnData.get("id").toString();
+        String smsId = returnData.get("id").toString();
         return smsId;
     }
 }
