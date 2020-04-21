@@ -43,7 +43,7 @@ public class HttpClientUtil {
 
     private static final String token_key = "Authorization";
     private static CloseableHttpClient httpClient;
-    private static CloseableHttpResponse httpResponse;
+    private static CloseableHttpResponse httpResponse4;
 
 
     private static PoolingHttpClientConnectionManager cm;
