@@ -43,7 +43,7 @@ public class HttpClientUtil {
 
     private static final String token_key = "Authorization";
     private static CloseableHttpClient httpClient;
-    private static CloseableHttpResponse httpResponse4;
+    private static CloseableHttpResponse httpResponse;
 
 
     private static PoolingHttpClientConnectionManager cm;
@@ -206,6 +206,7 @@ public class HttpClientUtil {
             return null;
         } finally {
             try {
+                System.out.println("sd");
                 httpResponse.close();
                 httpClient.close();
             } catch (IOException e) {
